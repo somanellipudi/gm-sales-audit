@@ -247,6 +247,8 @@ Use only the provided data. Do not invent facts. Use `final_data_used` as the ma
 
 This report is for GrowingMonk internal use only. It should help a salesperson prepare a specific pitch. It may include direct competitor gaps, pitch angles, outreach messages, call questions, likely objections, internal warnings, proof needed before claims, where to push the conversation, and what access to request from the prospect.
 
+This should be framed as an in-house GrowingMonk asset and the long-term sales entry point for diagnosing website, Google profile, SEO, ads, content, local presence, and WhatsApp readiness.
+
 {structure_context}
 
 Research data:
@@ -263,7 +265,16 @@ Generate a Markdown report with this exact structure:
 ## 1. Internal Executive Summary
 Give a direct, specific 4-5 line internal summary of the business's current digital position and the likely sales opportunity.
 
-## 2. Verified Public Data
+## 2. Priority Score
+Give a single internal priority score from 1-10, where 10 means high urgency and strong readiness for a GrowingMonk engagement.
+
+## 3. Opportunity Estimate
+Provide a short estimate of the opportunity size or scope based on the visible public data and local presence.
+
+## 4. WhatsApp / Call CTA
+Give a short recommended call-to-action for WhatsApp or phone outreach that the salesperson can use.
+
+## 5. Verified Public Data
 Summarize only the most important verified public data. Avoid repeating full Google Places fields already visible in the JSON. Include Google Places, website snapshot, PageSpeed, public contact signals, and public search results only where useful.
 
 Include a compact Markdown table for verified numbers when available:
@@ -357,6 +368,8 @@ Use only the provided data. Do not invent facts. Use `final_data_used` as the ma
 
 This report should build trust and show GrowingMonk did real research before pitching. It is for a lead/prospect who has not yet signed. It must be helpful, premium, practical, careful, and not aggressive. Give enough insight to prove expertise, but do not give away a full implementation playbook.
 
+This should be framed as an in-house GrowingMonk asset and the long-term sales entry point for diagnosing website, Google profile, SEO, ads, content, local presence, and WhatsApp readiness.
+
 {structure_context}
 
 Research data:
@@ -371,10 +384,22 @@ Generate a Markdown report with this exact structure:
 ## 1. Executive Summary
 Give a concise 3-4 line executive summary using careful, prospect-safe language. Do not start with charts or raw data.
 
-## 2. What We Reviewed
+## 2. Priority Score
+Give a single priority score from 1-10 based on website health, local visibility, Google profile maturity, and readiness for a GrowingMonk engagement.
+
+## 3. Opportunity Estimate
+Provide a short, client-friendly estimate of the highest-value opportunity areas and the likely sales focus.
+
+## 4. Recommended Package
+Recommend a single GrowingMonk package that fits the prospect's current needs.
+
+## 5. WhatsApp / Call CTA
+Provide a short CTA for the prospect to contact GrowingMonk by WhatsApp or phone.
+
+## 6. What We Reviewed
 Explain that the report is based on publicly available information and limited technical checks. Mention source categories used, such as Google Places, PageSpeed, website snapshot, public search results, contact discovery, competitor comparison, and optional client-access data only if present.
 
-## 3. Verified Number Snapshot
+## 7. Verified Number Snapshot
 Include a small "Verified Number Snapshot" table when numbers are available. Use only verified public or permitted client-access numbers.
 
 ## 4. What Looks Strong
