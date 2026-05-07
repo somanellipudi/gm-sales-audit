@@ -261,7 +261,7 @@ def _draw_simple_table(pdf: AuditPDF, title: str, headers: list[str], rows: list
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Helvetica", "B", 8)
     for header in headers:
-        pdf.cell(col_w, row_h, _truncate(header, 18), border=1, align="C", fill=True)
+        pdf.cell(col_w, row_h, sanitize_text(str(header)), border=1, align="C", fill=True)
     pdf.ln(row_h)
 
     pdf.set_font("Helvetica", "", 8)
@@ -270,7 +270,7 @@ def _draw_simple_table(pdf: AuditPDF, title: str, headers: list[str], rows: list
         if pdf.get_y() > 260:
             pdf.add_page()
         for cell in row:
-            pdf.cell(col_w, row_h, _truncate(cell, 22), border=1)
+            pdf.cell(col_w, row_h, sanitize_text(str(cell)), border=1)
         pdf.ln(row_h)
     pdf.ln(2)
 
