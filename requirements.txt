@@ -1,0 +1,9 @@
+streamlit
+requests
+google-genai
+python-dotenv
+beautifulsoup4
+google-analytics-data
+google-api-python-client
+google-auth
+fpdf2
