@@ -691,13 +691,27 @@ TTL: Auto
 
 Important: remove `https://` from the target.
 
-4. Test:
+4. In Cloud Run, map the custom domain `audit.growingmonk.com` to the `monkaudit` service and verify the managed certificate is active.
+
+```bash
+gcloud run domain-mappings create --service monkaudit --domain audit.growingmonk.com --region asia-south1
+```
+
+5. Once the domain mapping is active, confirm the certificate status in the Cloud Run console or with:
+
+```bash
+gcloud run domain-mappings describe --service monkaudit --domain audit.growingmonk.com --region asia-south1
+```
+
+6. Test:
 
 ```text
 https://audit.growingmonk.com
 ```
 
-5. If simple CNAME does not work, use a Cloudflare Worker fallback.
+> If you see `NET::ERR_CERT_COMMON_NAME_INVALID`, that means the browser is reaching the Cloud Run host directly without a valid custom domain certificate. Fix this by creating the Cloud Run domain mapping and allowing the managed certificate to provision.
+
+7. If simple CNAME does not work, use a Cloudflare Worker fallback.
 
 Worker code:
 
