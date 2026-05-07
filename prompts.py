@@ -3,6 +3,7 @@
 import json
 from typing import Any
 
+from packages import allowed_offer_labels, offer_prompt_context, normalize_offer_label
 
 NICHE_GUIDANCE: dict[str, str] = {
     "Salon / Beauty": """
@@ -245,9 +246,12 @@ You are a senior sales strategist for GrowingMonk.
 
 Use only the provided data. Do not invent facts. Use `final_data_used` as the main business identity. Mention manual overrides separately when relevant. Separate auto-discovered public data, manual overrides, missing data, and client-access analytics data. Cite source names or source types when making important claims. Never pretend GA4, Search Console, private Instagram, bookings, revenue, or ad account data exists unless it is present in the JSON.
 
-This report is for GrowingMonk internal use only. It should help a salesperson prepare a specific pitch. It may include direct competitor gaps, pitch angles, outreach messages, call questions, likely objections, internal warnings, proof needed before claims, where to push the conversation, and what access to request from the prospect.
+This report is for GrowingMonk internal use only. It should help a salesperson prepare a specific pitch. It may include direct competitor gaps, pitch angles, outreach messages, call questions, likely objections, internal cautions, proof needed before claims, where to push the conversation, and what access to request from the prospect.
 
 This should be framed as an in-house GrowingMonk asset and the long-term sales entry point for diagnosing website, Google profile, SEO, ads, content, local presence, and WhatsApp readiness.
+
+Use only these allowed offers:
+{offer_prompt_context()}
 
 {structure_context}
 
@@ -271,10 +275,13 @@ Give a single internal priority score from 1-10, where 10 means high urgency and
 ## 3. Opportunity Estimate
 Provide a short estimate of the opportunity size or scope based on the visible public data and local presence.
 
-## 4. WhatsApp / Call CTA
+## 4. Recommended Offer / Growth Path
+Choose one allowed offer and explain why it fits this business. Do not invent package names.
+
+## 5. WhatsApp / Call CTA
 Give a short recommended call-to-action for WhatsApp or phone outreach that the salesperson can use.
 
-## 5. Verified Public Data
+## 6. Verified Public Data
 Summarize only the most important verified public data. Avoid repeating full Google Places fields already visible in the JSON. Include Google Places, website snapshot, PageSpeed, public contact signals, and public search results only where useful.
 
 Include a compact Markdown table for verified numbers when available:
@@ -288,32 +295,32 @@ Include a compact Markdown table for verified numbers when available:
 
 If a field is missing, place it under "Needs Client Confirmation" instead of calling it "Missing Data."
 
-## 3. Inferred Opportunities
+## 7. Inferred Opportunities
 Clearly separate opportunities inferred from public data from verified facts. Use "appears", "may", and "should be checked" where appropriate.
 
-## 4. Needs Client Confirmation
+## 8. Needs Client Confirmation
 List data requiring client access / confirmation, such as GBP access, analytics, Search Console, ad accounts, booking/contact records, Instagram insights, and revenue/bookings data. Use the heading wording "Data Requiring Client Access / Confirmation" when referring to this bucket.
 
-## 5. Category / Niche Detection
+## 9. Category / Niche Detection
 Explain selected niche, detected niche, business structure, place types, and what the category implies for local visibility, content, offer clarity, contact flow, and scale/franchise needs where relevant.
 
-## 6. Google Review & Local Trust Gap
+## 10. Google Review & Local Trust Gap
 Compare review count/rating carefully against nearby competitors. State what is verified and what is inferred. Do not claim exact lead loss or revenue impact.
 
-## 7. Competitor Comparison
+## 11. Competitor Comparison
 For each competitor, include name, rating/reviews, visible strength, possible weakness, and how the salesperson can use the comparison carefully.
 Use a Markdown table where available. Include review counts and ratings as numbers, not vague claims.
 
-## 8. Contact / WhatsApp / Booking Flow
+## 12. Contact / WhatsApp / Booking Flow
 Use discovered phone/WhatsApp/contact data. Do not call a phone number WhatsApp unless a public WhatsApp link/source was found. Possible generated links must be labeled "possible WhatsApp link - needs manual verification." Explain contact friction and what access or confirmation to request.
 
-## 9. Website & Content Observations
+## 13. Website & Content Observations
 Use PageSpeed, website snapshot, public search results, and Search Console only if available. Explain content clarity, trust signals, offer clarity, local pages, technical checks, and conversion implications. If something is not found in the lightweight snapshot, use: "Our lightweight website snapshot did not detect... This should be verified with a deeper website review."
 
-## 10. Main Sales Pitch Angle
+## 14. Main Sales Pitch Angle
 Write one very specific pitch angle for this business. Reference only supported review, competitor, contact, website, content, tracking, or offer opportunities.
 
-## 11. Outreach Messages
+## 15. Outreach Messages
 Write:
 - Instagram DM
 - WhatsApp message
@@ -323,20 +330,17 @@ Write:
 
 Messages should be short, specific, and not spammy.
 
-## 12. Sales Call Questions
+## 16. Sales Call Questions
 Give 8-10 smart questions that diagnose access, tracking, booking/contact flow, offers, content, local visibility, and current constraints.
 
-## 13. Likely Objections & Responses
+## 17. Likely Objections & Responses
 Give likely objections and concise responses a salesperson can use without overstating claims.
 
-## 14. Recommended Offer
-Recommend the most appropriate GrowingMonk offer and why. Use one of: Free Growth Audit, 30-Day Growth Sprint, Monthly Growth System, Tracking Setup First.
-
-## 15. Proof Needed Before Claims
+## 18. Proof Needed Before Claims
 State clearly: Do not claim revenue, bookings, or exact lead loss without client-confirmed data.
 List what must be confirmed before making stronger claims: GBP access, Instagram insights, call/WhatsApp data, appointment records, ad account access, booking software or manual sheet.
 
-## 16. Internal Notes & Cautions
+## 19. Internal Notes & Cautions
 Include internal warnings, what not to claim, where to push the conversation, and what access to request from the client.
 
 Rules:
@@ -370,6 +374,9 @@ This report should build trust and show GrowingMonk did real research before pit
 
 This should be framed as an in-house GrowingMonk asset and the long-term sales entry point for diagnosing website, Google profile, SEO, ads, content, local presence, and WhatsApp readiness.
 
+Use only these allowed offers:
+{offer_prompt_context()}
+
 {structure_context}
 
 Research data:
@@ -390,8 +397,8 @@ Give a single priority score from 1-10 based on website health, local visibility
 ## 3. Opportunity Estimate
 Provide a short, client-friendly estimate of the highest-value opportunity areas and the likely sales focus.
 
-## 4. Recommended Package
-Recommend a single GrowingMonk package that fits the prospect's current needs.
+## 4. Recommended Next Step
+Choose one allowed offer and describe it as the recommended next step or growth path. Do not invent package names.
 
 ## 5. WhatsApp / Call CTA
 Provide a short CTA for the prospect to contact GrowingMonk by WhatsApp or phone.
@@ -402,13 +409,13 @@ Explain that the report is based on publicly available information and limited t
 ## 7. Verified Number Snapshot
 Include a small "Verified Number Snapshot" table when numbers are available. Use only verified public or permitted client-access numbers.
 
-## 4. What Looks Strong
+## 8. What Looks Strong
 Give 3-5 positive observations supported by the available data. If evidence is limited, phrase the point as something that appears promising or worth building on.
 
-## 5. Key Growth Opportunities
+## 9. Key Growth Opportunities
 Give 5-7 practical improvement opportunities. Keep them specific to the business structure and separate verified observations from inferred opportunities. Explain what should be improved and why it matters, but avoid step-by-step execution detail, exact ad/content calendars, scripts, or internal strategy mechanics.
 
-## 6. Local Visibility and Trust
+## 10. Local Visibility and Trust
 Use review/rating/competitor comparison carefully and professionally.
 Include a simple comparison table when competitor review/rating data is available. Keep the language professional and directional.
 Use safe language such as:
@@ -421,13 +428,13 @@ Avoid harsh language such as:
 - "You are losing customers."
 - "You are behind."
 
-## 7. Website and Contact Flow
+## 11. Website and Contact Flow
 Explain website/contact findings in practical language. Do not call a phone number WhatsApp unless a WhatsApp link/source was found. If something is not found in the lightweight snapshot, use: "Our lightweight website snapshot did not detect... This should be verified with a deeper website review."
 
-## 8. Content and Offer Opportunities
+## 12. Content and Offer Opportunities
 Give niche-specific direction for content, proof, offers, local visibility, and buyer education. Keep this at the level of strategic themes and examples. Do not provide a complete content calendar, campaign structure, ad copy bank, or implementation checklist.
 
-## 9. Suggested 30-Day Growth Sprint Roadmap
+## 13. Suggested 30-Day Growth Sprint Roadmap
 Frame this as a high-level 30-day Growth Sprint direction, not a free implementation plan.
 Use this structure:
 Week 1: Visibility, tracking, profile cleanup.
@@ -436,15 +443,15 @@ Week 3: Launch content/campaign experiments.
 Week 4: Review signals and plan improvements.
 For each week, give 1-2 outcome-focused bullets only. Avoid detailed how-to steps, exact scripts, exact campaign setup, or reusable internal processes.
 
-## 10. Tracking and Measurement Notes
+## 14. Tracking and Measurement Notes
 Explain what can be tracked and what needs access. Mention Google Business Profile, website analytics, call/WhatsApp clicks, forms, ad accounts, and booking/contact data only as applicable.
 
-## 11. Recommended Next Step
+## 15. Recommended Follow-Up
 Recommend either:
 - "Book a Growth Sprint discussion with GrowingMonk"
 - "Start with a 30-Day Growth Sprint."
 
-## 12. Limitations
+## 16. Limitations
 Include this exact sentence:
 "This due diligence report is based on publicly available information and limited technical checks. Full performance analysis requires access to Google Business Profile, website analytics, ad accounts, and booking/contact data."
 
