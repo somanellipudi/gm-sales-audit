@@ -6,6 +6,59 @@ It helps the internal sales team collect prospect details, check basic website p
 
 MonkAudit is internal-only. Customers do not log in, access the app, or use a dashboard. The GrowingMonk team runs the audit and shares only the client-safe Growth Due Diligence Report with prospects.
 
+## About Growing Monk
+
+Growing Monk is a growth systems agency specializing in helping local, service, and ecommerce businesses scale through data-driven marketing strategies. We provide comprehensive growth solutions including SEO, PPC advertising, content marketing, social media management, and conversion optimization.
+
+This repository contains MonkAudit, our proprietary internal tool for conducting prospect audits and generating due diligence reports to support our sales and client onboarding processes.
+
+## Features
+
+- **Quick Audit Mode**: Manual inputs, PageSpeed analysis, Gemini-powered reports, and Markdown/PDF downloads.
+- **Deep Research Mode**: Automated discovery using Google Places, PageSpeed, website snapshots, optional SerpAPI search, contact discovery, competitor analysis, and optional client-access analytics.
+- **Report Generation**: Creates client-shareable Growth Due Diligence Reports, internal Sales Diligence Reports, and Sales Call Briefs.
+- **PDF Export**: Branded PDF generation using fpdf2 with Growing Monk branding.
+- **Delivery Options**: Optional Google Drive upload and SMTP email delivery for reports.
+- **Lead Pipeline**: SQLite-based tracking of audit status and prospect pipeline.
+- **Security**: Password-protected access with optional Cloudflare Access for production.
+
+## Tech Stack
+
+- **Frontend**: Streamlit
+- **Backend**: Python
+- **AI/ML**: Google Gemini via Vertex AI
+- **APIs**: Google PageSpeed, Google Places, SerpAPI, GA4 Data API, Search Console API
+- **Database**: SQLite
+- **Deployment**: Docker, Google Cloud Run, Render, Railway, Streamlit Community Cloud
+- **PDF Generation**: fpdf2
+
+## Project Structure
+
+```
+monkaudit/
+├── app.py                 # Main Streamlit application
+├── auth.py                # Authentication module
+├── analytics_ga4.py       # GA4 data integration
+├── competitor_analysis.py # Competitor research
+├── contact_discovery.py   # Contact information discovery
+├── llm.py                 # LLM integration (Gemini)
+├── pagespeed.py           # PageSpeed Insights integration
+├── pdf_generator.py       # PDF report generation
+├── places.py              # Google Places integration
+├── prompts.py             # LLM prompt templates
+├── research.py            # Research utilities
+├── sales_ops.py           # Sales operations and pipeline
+├── search_console.py      # Search Console integration
+├── source_utils.py        # Source data utilities
+├── website_research.py    # Website analysis
+├── assets/                # Static assets (logos, etc.)
+├── data/                  # SQLite database (ignored by git)
+├── requirements.txt       # Python dependencies
+├── Dockerfile             # Docker configuration
+├── deploy.sh              # Deployment script
+└── README.md              # This file
+```
+
 ## Setup
 
 ### Windows
@@ -320,6 +373,26 @@ monkaudit/assets/growingmonk_logo.png
 ```
 
 JPG and JPEG are also supported with the same base name. If no logo asset is present, MonkAudit uses a built-in GrowingMonk wordmark fallback so PDFs still look branded.
+
+## Contributing
+
+This is an internal Growing Monk tool. For contributions:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+Please ensure all changes maintain the internal-only nature of the tool and do not expose sensitive client data.
+
+## License
+
+This project is proprietary to Growing Monk. All rights reserved.
+
+## Contact
+
+For questions or support, contact the Growing Monk development team at [dev@growingmonk.com](mailto:dev@growingmonk.com).
 
 ## Future Deployment Notes
 
