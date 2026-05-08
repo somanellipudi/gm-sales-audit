@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -8,6 +9,7 @@ import ssl
 from email.message import EmailMessage
 from io import BytesIO
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 from zipfile import ZIP_DEFLATED, ZipFile
 from urllib.parse import parse_qs, urlparse
@@ -53,6 +55,328 @@ DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file"
 CLIENT_SAFE_REVIEW_LABEL = (
     "I reviewed the client-facing report and confirmed it is safe to share externally."
 )
+APP_DIR = Path(__file__).resolve().parent
+LOGO_PATH = APP_DIR / "assets" / "growingmonk_logo.png"
+MARK_PATH = APP_DIR / "assets" / "growingmonk_mark.png"
+
+
+def asset_data_uri(path: Path) -> str:
+    if not path.exists():
+        return ""
+    mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
+def apply_website_theme() -> None:
+    st.markdown(
+        f"""
+        <style>
+        :root {{
+            --gm-bg: #0c0f16;
+            --gm-bg-2: #090c12;
+            --gm-panel: rgba(255, 255, 255, .045);
+            --gm-panel-strong: rgba(255, 255, 255, .075);
+            --gm-text: #ede9e1;
+            --gm-muted: rgba(237, 233, 225, .66);
+            --gm-soft: rgba(237, 233, 225, .42);
+            --gm-brand: #E8751A;
+            --gm-brand-2: #ff8c35;
+            --gm-teal: #1D9E75;
+            --gm-line: rgba(255, 255, 255, .10);
+            --gm-paper: #f3eee6;
+            --gm-ink: #17191f;
+        }}
+
+        .stApp {{
+            background:
+                radial-gradient(ellipse 76% 62% at 82% 0%, rgba(232,117,26,.16), rgba(232,117,26,.045) 42%, transparent 70%),
+                radial-gradient(ellipse 48% 42% at 8% 92%, rgba(29,158,117,.08), transparent 68%),
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(150deg, var(--gm-bg), #111722 54%, var(--gm-bg-2));
+            background-size: auto, auto, 58px 58px, 58px 58px, auto;
+            color: var(--gm-text);
+        }}
+
+        .block-container {{
+            max-width: 1180px;
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }}
+
+        header[data-testid="stHeader"] {{
+            background: rgba(9,12,18,.92);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }}
+
+        [data-testid="stToolbar"] {{
+            right: 1rem;
+        }}
+
+        h1, h2, h3, [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3 {{
+            color: var(--gm-text);
+            letter-spacing: 0;
+        }}
+
+        p, label, .stMarkdown, [data-testid="stCaptionContainer"],
+        [data-testid="stMarkdownContainer"] li {{
+            color: var(--gm-muted);
+        }}
+
+        section[data-testid="stSidebar"] {{
+            background: linear-gradient(180deg, rgba(9,12,18,.98), rgba(17,23,34,.98));
+            border-right: 1px solid var(--gm-line);
+        }}
+
+        section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {{
+            color: var(--gm-text);
+        }}
+
+        .gm-hero {{
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+            gap: clamp(22px, 4vw, 52px);
+            align-items: center;
+            margin: .25rem 0 1.45rem;
+            padding: clamp(24px, 4vw, 42px);
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 8px;
+            background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.028));
+            box-shadow: 0 24px 80px rgba(0,0,0,.28);
+        }}
+
+        .gm-hero::before {{
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 72% 64% at 92% 12%, rgba(232,117,26,.17), rgba(232,117,26,.045) 44%, transparent 70%),
+                radial-gradient(ellipse 36% 42% at 4% 100%, rgba(29,158,117,.08), transparent 68%);
+        }}
+
+        .gm-hero::after {{
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gm-brand), var(--gm-teal));
+        }}
+
+        .gm-hero > * {{
+            position: relative;
+            z-index: 1;
+        }}
+
+        .gm-kicker {{
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            color: var(--gm-brand-2);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }}
+
+        .gm-kicker::before {{
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--gm-brand-2);
+            box-shadow: 0 0 0 4px rgba(232,117,26,.16);
+        }}
+
+        .gm-hero h1 {{
+            margin: 0;
+            color: var(--gm-text);
+            font-size: clamp(2.2rem, 5vw, 4.8rem);
+            line-height: .96;
+            letter-spacing: 0;
+        }}
+
+        .gm-hero p {{
+            max-width: 720px;
+            margin: 16px 0 0;
+            font-size: 1.02rem;
+            line-height: 1.7;
+            color: var(--gm-muted);
+        }}
+
+        .gm-hero-panel {{
+            position: relative;
+            min-height: 230px;
+            display: grid;
+            place-items: center;
+            border-left: 1px solid rgba(255,255,255,.08);
+        }}
+
+        .gm-hero-panel img {{
+            width: min(72%, 260px);
+            max-height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 18px 44px rgba(232,117,26,.22));
+        }}
+
+        .gm-chip-row {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 22px;
+        }}
+
+        .gm-chip {{
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 7px 12px;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 999px;
+            background: rgba(6,9,18,.62);
+            color: var(--gm-text);
+            font-size: 12px;
+            font-weight: 750;
+        }}
+
+        div[data-testid="stForm"], div[data-testid="stExpander"] details,
+        div[data-testid="stTabs"] [data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"],
+        [data-testid="stMetric"], [data-testid="stDataFrame"], [data-testid="stJson"] {{
+            border-radius: 8px;
+            border: 1px solid var(--gm-line);
+            background: rgba(255,255,255,.045);
+            box-shadow: 0 16px 46px rgba(0,0,0,.18);
+        }}
+
+        div[data-testid="stForm"] {{
+            padding: 1.25rem;
+        }}
+
+        div[data-testid="stForm"] [data-testid="stAlert"] {{
+            background: rgba(29,158,117,.13);
+            border-color: rgba(29,158,117,.22);
+        }}
+
+        [data-testid="stMetric"] {{
+            padding: 1rem;
+        }}
+
+        [data-testid="stMetricLabel"] p {{
+            color: var(--gm-soft);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .72rem;
+        }}
+
+        [data-testid="stMetricValue"] {{
+            color: var(--gm-text);
+        }}
+
+        .stButton > button, .stDownloadButton > button,
+        [data-testid="stFormSubmitButton"] > button {{
+            border: 1px solid rgba(232,117,26,.34);
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--gm-brand), var(--gm-brand-2));
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 14px 38px rgba(232,117,26,.22);
+        }}
+
+        .stButton > button:hover, .stDownloadButton > button:hover,
+        [data-testid="stFormSubmitButton"] > button:hover {{
+            border-color: rgba(255,140,53,.74);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 18px 48px rgba(232,117,26,.30);
+        }}
+
+        .stTextInput input, .stTextArea textarea,
+        div[data-baseweb="select"] > div,
+        div[role="radiogroup"] label {{
+            border-color: rgba(255,255,255,.12);
+            background-color: rgba(8,11,17,.88);
+            color: var(--gm-text);
+        }}
+
+        .stTextInput input:focus, .stTextArea textarea:focus {{
+            border-color: var(--gm-brand-2);
+            box-shadow: 0 0 0 1px rgba(255,140,53,.45);
+        }}
+
+        div[data-testid="stTabs"] button {{
+            color: var(--gm-muted);
+            font-weight: 800;
+        }}
+
+        div[data-testid="stTabs"] button[aria-selected="true"] {{
+            color: var(--gm-brand-2);
+        }}
+
+        div[data-testid="stAlert"] {{
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,.10);
+            background: rgba(255,255,255,.06);
+        }}
+
+        hr {{
+            border-color: var(--gm-line);
+        }}
+
+        @media (max-width: 760px) {{
+            .block-container {{
+                padding-top: 1.4rem;
+            }}
+
+            .gm-hero {{
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }}
+
+            .gm-hero-panel {{
+                min-height: 160px;
+                border-left: 0;
+                border-top: 1px solid rgba(255,255,255,.08);
+                padding-top: 18px;
+            }}
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_app_hero() -> None:
+    logo_uri = asset_data_uri(LOGO_PATH)
+    logo_html = f'<img src="{logo_uri}" alt="GrowingMonk" />' if logo_uri else "<strong>GrowingMonk</strong>"
+    st.markdown(
+        f"""
+        <section class="gm-hero">
+            <div>
+                <div class="gm-kicker">Internal growth audit system</div>
+                <h1>MonkAudit</h1>
+                <p>
+                    Prospect research, audit reports, sales diligence, and client-safe delivery packs
+                    in the GrowingMonk website theme.
+                </p>
+                <div class="gm-chip-row">
+                    <span class="gm-chip">Quick audits</span>
+                    <span class="gm-chip">Deep research</span>
+                    <span class="gm-chip">Sales packs</span>
+                    <span class="gm-chip">Client-safe reports</span>
+                </div>
+            </div>
+            <div class="gm-hero-panel">{logo_html}</div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def get_secret(name: str, default: str = "") -> str:
@@ -844,6 +1168,8 @@ def render_pipeline_dashboard() -> None:
 
 def render_sidebar() -> None:
     with st.sidebar:
+        if LOGO_PATH.exists():
+            st.image(str(LOGO_PATH), use_container_width=True)
         st.markdown("### MonkAudit")
         st.caption("Internal GrowingMonk prospect audit assistant.")
         st.divider()
@@ -1875,11 +2201,11 @@ def render_deep_results(
 
 def main() -> None:
     st.set_page_config(page_title="MonkAudit | GrowingMonk", layout="wide")
+    apply_website_theme()
     require_login()
     render_sidebar()
 
-    st.title("MonkAudit | GrowingMonk")
-    st.caption("Internal prospect audit assistant")
+    render_app_hero()
 
     mode = st.radio("Audit mode", [QUICK_MODE, DEEP_MODE], horizontal=True)
     should_run_research = False

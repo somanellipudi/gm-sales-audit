@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import base64
 import hmac
 import os
+from pathlib import Path
 
 import streamlit as st
+
+
+APP_DIR = Path(__file__).resolve().parent
+LOGO_PATH = APP_DIR / "assets" / "growingmonk_logo.png"
 
 
 def _get_secret(name: str) -> str:
@@ -12,6 +18,31 @@ def _get_secret(name: str) -> str:
     except (FileNotFoundError, KeyError):
         value = os.getenv(name, "")
     return str(value).strip()
+
+
+def _asset_data_uri(path: Path) -> str:
+    if not path.exists():
+        return ""
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
+
+
+def _render_login_header() -> None:
+    logo_uri = _asset_data_uri(LOGO_PATH)
+    logo_html = f'<img src="{logo_uri}" alt="GrowingMonk" />' if logo_uri else "<strong>GrowingMonk</strong>"
+    st.markdown(
+        f"""
+        <section class="gm-hero gm-login">
+            <div>
+                <div class="gm-kicker">Internal growth audit system</div>
+                <h1>MonkAudit</h1>
+                <p>Sign in to prepare prospect audits, sales diligence, and client-safe delivery packs.</p>
+            </div>
+            <div class="gm-hero-panel">{logo_html}</div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def require_login() -> None:
@@ -36,8 +67,7 @@ def require_login() -> None:
                 st.rerun()
         return
 
-    st.title("MonkAudit | GrowingMonk")
-    st.caption("Internal prospect audit assistant")
+    _render_login_header()
     password = st.text_input("Password", type="password")
 
     if not password:
